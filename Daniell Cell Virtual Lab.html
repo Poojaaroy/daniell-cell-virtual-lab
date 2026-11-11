@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daniell Cell Virtual Lab</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f7fa;--card:#fff;--tx:#1b2430;--mu:#5d6b7c;--bd:#dbe2ea;--ac:#0f766e;--ac2:#e8f5f3;--zn:#8b98a8;--cu:#c1713b;--zs:#dbeafe;--cs:#bfe3f7;--ok:#15803d;--bad:#b91c1c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10161d;--card:#18212b;--tx:#e6edf3;--mu:#94a3b3;--bd:#2a3644;--ac:#2dd4bf;--ac2:#12302d;--zs:#1e3a5f;--cs:#164e63;--ok:#4ade80;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#10161d;--card:#18212b;--tx:#e6edf3;--mu:#94a3b3;--bd:#2a3644;--ac:#2dd4bf;--ac2:#12302d;--zs:#1e3a5f;--cs:#164e63;--ok:#4ade80;--bad:#f87171}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:20px 16px 8px;max-width:900px;margin:auto}
+.eye{color:var(--ac);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:24px;margin:4px 0 6px;line-height:1.2}h2{font-size:19px;margin:0 0 8px}
+.sub{color:var(--mu);margin:0 0 8px}.who{font-size:13px;color:var(--mu)}.who b{color:var(--tx)}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;max-width:900px;margin:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+nav button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:900px;margin:auto;padding:8px 16px 40px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.eq{background:var(--ac2);border-radius:10px;padding:10px 12px;font-family:Georgia,serif;margin:8px 0;overflow-x:auto;white-space:nowrap}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
+input[type=text]{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;margin:6px 6px 0 0}
+.btn.alt{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.val{float:right;color:var(--tx);font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px solid var(--bd);padding:7px 6px;text-align:left}
+.wrap{overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.m{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}.m small{color:var(--mu);display:block;font-size:11px}.m b{font-size:17px}
+svg{width:100%;height:auto;display:block}svg text{fill:var(--tx);font:11px system-ui,sans-serif}
+.q{margin:12px 0}.q p{margin:0 0 4px;font-weight:600}.q label{display:flex;gap:8px;color:var(--tx);margin:3px 0;font-size:14px}
+.good{color:var(--ok)}.bad{color:var(--bad)}
+#rep{display:none}
+@media print{body *{visibility:hidden}#rep,#rep *{visibility:visible}#rep{display:block;position:absolute;left:0;top:0;width:100%;color:#000}}
+</style></head><body>
+<header><div class="eye">Chemistry • Interactive Virtual Laboratory</div>
+<h1>Daniell Cell Virtual Lab</h1>
+<p class="sub">Build a Zn | Zn²⁺ ‖ Cu²⁺ | Cu galvanic cell, watch electrons and ions move, and see the Nernst equation in action.</p>
+<div class="who">Student: <b id="hN">Not entered</b> · Reg No: <b id="hR">Not entered</b> · Dept: <b id="hD">Not entered</b></div></header>
+<nav id="nav"></nav>
+<main>
+<section id="s0"><div class="card"><h2>Student details</h2><p class="sub">These appear in the header and on your PDF report.</p>
+<label>Full name *</label><input type="text" id="fN"><label>Register number *</label><input type="text" id="fR"><label>Department *</label><input type="text" id="fD">
+<button class="btn" id="sv">Save details</button><button class="btn alt" id="cl">Clear</button></div></section>
+
+<section id="s1"><div class="card"><h2>Aim &amp; theory</h2>
+<p>To set up a Daniell cell and study how concentration and temperature affect its EMF.</p>
+<div class="eq">Anode (oxidation): Zn(s) → Zn²⁺ + 2e⁻ &nbsp; E° = +0.76 V</div>
+<div class="eq">Cathode (reduction): Cu²⁺ + 2e⁻ → Cu(s) &nbsp; E° = +0.34 V</div>
+<div class="eq">Overall: Zn + Cu²⁺ → Zn²⁺ + Cu &nbsp; E°cell = 0.34 − (−0.76) = 1.10 V</div>
+<div class="eq">E = E° − (RT/nF) ln([Zn²⁺]/[Cu²⁺]) &nbsp;(n = 2)</div></div>
+<div class="card wrap"><h2>Key terms</h2><table>
+<tr><th>Part</th><th>Role</th></tr>
+<tr><td>Zinc electrode</td><td>Anode (−): loses mass as Zn dissolves.</td></tr>
+<tr><td>Copper electrode</td><td>Cathode (+): gains mass as Cu deposits.</td></tr>
+<tr><td>Salt bridge</td><td>Completes the circuit and keeps both solutions electrically neutral.</td></tr>
+<tr><td>External wire</td><td>Electrons flow from Zn to Cu; conventional current flows Cu to Zn.</td></tr></table></div></section>
+
+<section id="s2"><div class="card"><h2>Cell simulator</h2>
+<svg viewBox="0 0 360 290" id="svg" role="img" aria-label="Daniell cell diagram">
+<rect id="lz" x="30" y="150" width="110" height="120" rx="6" fill="var(--zs)" stroke="var(--tx)" stroke-width="2"/>
+<rect id="lc" x="220" y="150" width="110" height="120" rx="6" fill="var(--cs)" stroke="var(--tx)" stroke-width="2"/>
+<path d="M115 205V125H245V205" fill="none" stroke="var(--tx)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="bp" d="M115 205V125H245V205" fill="none" stroke="var(--card)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="bpr" d="M245 205V125H115V205" fill="none" stroke="none"/>
+<rect id="ez" x="52" y="105" width="20" height="150" fill="var(--zn)" stroke="var(--tx)"/>
+<rect id="ec" x="288" y="105" width="20" height="150" fill="var(--cu)" stroke="var(--tx)"/>
+<path id="wire" d="M62 105V40H298V105" fill="none" stroke="var(--tx)" stroke-width="2"/>
+<rect x="152" y="26" width="56" height="28" rx="6" fill="var(--card)" stroke="var(--tx)" stroke-width="2"/>
+<text id="vt" x="180" y="45" text-anchor="middle" style="font-size:15px;font-weight:700">1.10 V</text>
+<line id="sw" x1="90" y1="40" x2="112" y2="40" stroke="var(--bad)" stroke-width="4" stroke-linecap="round"/>
+<text x="62" y="278" text-anchor="middle">Zn (anode, −)</text><text x="298" y="278" text-anchor="middle">Cu (cathode, +)</text>
+<text x="85" y="170" text-anchor="middle" style="font-size:10px">ZnSO₄</text><text x="275" y="170" text-anchor="middle" style="font-size:10px">CuSO₄</text>
+<text x="180" y="116" text-anchor="middle" style="font-size:10px">salt bridge (KNO₃)</text>
+<g id="fx" style="display:none"></g></svg>
+<button class="btn" id="tg">Close circuit</button><button class="btn alt" id="rs">Reset cell</button><button class="btn alt" id="rc">Record reading</button>
+<div class="grid"><div class="m"><small>Cell EMF</small><b id="oE">–</b></div><div class="m"><small>Time</small><b id="oT">0 s</b></div>
+<div class="m"><small>Zn electrode mass</small><b id="oZ">10.000 g</b></div><div class="m"><small>Cu electrode mass</small><b id="oC">10.000 g</b></div></div>
+<label>[Zn²⁺] <span class="val" id="vz">1.000 M</span></label><input type="range" id="rz" min="-3" max="0.3" step="0.01" value="0">
+<label>[Cu²⁺] <span class="val" id="vc">1.000 M</span></label><input type="range" id="rcu" min="-3" max="0.3" step="0.01" value="0">
+<label>Temperature <span class="val" id="vT">298 K</span></label><input type="range" id="rT" min="273" max="348" step="1" value="298">
+<p id="msg" class="sub" style="margin-top:10px">Circuit is open: no current flows, but the voltmeter shows the cell’s EMF.</p></div></section>
+
+<section id="s3"><div class="card"><h2>Nernst equation lab</h2>
+<p class="sub">Uses the current simulator settings. Record readings in the simulator tab.</p>
+<div class="eq" id="nw"></div><div class="wrap"><svg viewBox="0 0 360 200" id="pl"></svg></div>
+<div class="wrap"><table><thead><tr><th>#</th><th>[Zn²⁺]</th><th>[Cu²⁺]</th><th>T (K)</th><th>E (V)</th></tr></thead><tbody id="rt"><tr><td colspan="5" class="sub">No readings yet.</td></tr></tbody></table></div>
+<button class="btn alt" id="cr">Clear readings</button></div></section>
+
+<section id="s4"><div class="card"><h2>Knowledge check</h2><p class="sub">5 questions · 2 marks each</p><div id="qz"></div>
+<button class="btn" id="qs">Submit answers</button><p id="qr" style="font-weight:600"></p></div></section>
+
+<section id="s5"><div class="card"><h2>Report &amp; PDF</h2><p class="sub">Includes your details, recorded readings and quiz score.</p>
+<button class="btn" id="pp">Generate PDF</button><p class="sub">In the print window, choose “Save as PDF”.</p></div></section>
+</main>
+<div id="rep"></div>
+<script>
+const $=id=>document.getElementById(id),F=96485,R=8.314,E0=1.10;
+let st={z:1,c:1,T:298,on:false,t:0,mz:10,mc:10},reads=[],score=null,det={n:'',r:'',d:''};
+const tabs=['My Details','Learn','Cell Simulator','Nernst Lab','Assessment','Report'];
+tabs.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>go(i);$('nav').appendChild(b)});
+function go(i){tabs.forEach((_,k)=>{$('s'+k).classList.toggle('on',k==i);$('nav').children[k].classList.toggle('on',k==i)});if(i==3)nern()}
+go(0);
+const E=()=>E0-(R*st.T/(2*F))*Math.log(st.z/st.c);
+const f=x=>x<0.01?x.toExponential(2):x.toFixed(3);
+function ui(){const e=E();$('vt').textContent=e.toFixed(3)+' V';$('oE').textContent=e.toFixed(3)+' V';
+$('vz').textContent=f(st.z)+' M';$('vc').textContent=f(st.c)+' M';$('vT').textContent=st.T+' K';
+$('oT').textContent=st.t.toFixed(1)+' s';$('oZ').textContent=st.mz.toFixed(3)+' g';$('oC').textContent=st.mc.toFixed(3)+' g';
+$('ez').setAttribute('width',Math.max(4,20*st.mz/10));$('ez').setAttribute('x',62-Math.max(4,20*st.mz/10)/2);
+const wc=20*st.mc/10;$('ec').setAttribute('width',wc);$('ec').setAttribute('x',298-wc/2);
+$('lz').setAttribute('fill-opacity',Math.min(1,.45+st.z*.4));$('lc').setAttribute('fill-opacity',Math.min(1,.35+st.c*.5))}
+function fx(){const g=$('fx');g.style.display=st.on?'':'none';if(!st.on||g.dataset.b)return;g.dataset.b=1;let h='';
+for(let i=0;i<6;i++)h+=`<circle r="4" fill="#eab308"><animateMotion dur="3s" begin="${-i*.5}s" repeatCount="indefinite"><mpath href="#wire"/></animateMotion></circle>`;
+for(let i=0;i<4;i++)h+=`<circle r="3.5" fill="#ef4444"><animateMotion dur="4s" begin="${-i}s" repeatCount="indefinite"><mpath href="#bp"/></animateMotion></circle>`+
+`<circle r="3.5" fill="#3b82f6"><animateMotion dur="4s" begin="${-i}s" repeatCount="indefinite"><mpath href="#bpr"/></animateMotion></circle>`;
+h+='<text x="180" y="22" text-anchor="middle" style="font-size:10px">e⁻ flow: Zn → Cu</text><text x="180" y="104" text-anchor="middle" style="font-size:10px">● K⁺ → Cu side &nbsp; ● NO₃⁻ → Zn side</text>';g.innerHTML=h}
+function sw(){$('sw').setAttribute('y2',st.on?40:18);$('sw').setAttribute('stroke',st.on?'var(--ok)':'var(--bad)');$('tg').textContent=st.on?'Open circuit':'Close circuit';
+$('msg').textContent=st.on?'Circuit closed: Zn oxidises (mass falls), Cu²⁺ is reduced (Cu deposits), [Zn²⁺] rises, [Cu²⁺] falls, so EMF slowly drops.':'Circuit is open: no current flows, but the voltmeter shows the cell’s EMF.';fx()}
+setInterval(()=>{if(!st.on)return;const d=.0006;if(st.c-d<=.001||st.mz<=0){st.on=false;sw();$('msg').textContent='Cell has run down: the limiting reactant is almost used up.';return}
+st.z+=d;st.c-=d;st.t+=.1;st.mz=Math.max(0,st.mz-d*.1*65.38);st.mc+=d*.1*63.55;$('rz').value=Math.log10(st.z);$('rcu').value=Math.log10(st.c);ui()},100);
+$('tg').onclick=()=>{st.on=!st.on;sw()};
+$('rs').onclick=()=>{st={z:1,c:1,T:298,on:false,t:0,mz:10,mc:10};$('rz').value=0;$('rcu').value=0;$('rT').value=298;sw();ui()};
+$('rz').oninput=e=>{st.z=Math.pow(10,+e.target.value);ui()};$('rcu').oninput=e=>{st.c=Math.pow(10,+e.target.value);ui()};$('rT').oninput=e=>{st.T=+e.target.value;ui()};
+$('rc').onclick=()=>{reads.push({z:st.z,c:st.c,T:st.T,e:E()});$('rc').textContent='Recorded ✓';setTimeout(()=>$('rc').textContent='Record reading',900)};
+$('cr').onclick=()=>{reads=[];nern()};
+function nern(){const e=E(),k=R*st.T/(2*F);
+$('nw').innerHTML=`E = 1.10 − (${k.toFixed(5)}) × ln(${f(st.z)} / ${f(st.c)})<br>E = <b>${e.toFixed(3)} V</b> &nbsp; ${st.z/st.c<1?'(Q &lt; 1, EMF above E°)':st.z/st.c>1?'(Q &gt; 1, EMF below E°)':'(Q = 1, E = E°)'}`;
+$('rt').innerHTML=reads.length?reads.map((r,i)=>`<tr><td>${i+1}</td><td>${f(r.z)}</td><td>${f(r.c)}</td><td>${r.T}</td><td>${r.e.toFixed(3)}</td></tr>`).join(''):'<tr><td colspan="5" class="sub">No readings yet.</td></tr>';
+const X=l=>40+(l+3)*(300/6),Y=v=>170-(v-.95)*(150/.3);let p='';
+for(let l=-3;l<=3;l+=.25){const v=E0-k*Math.log(Math.pow(10,l));p+=(l==-3?'M':'L')+X(l)+' '+Y(v)+' '}
+let d=`<path d="${p}" fill="none" stroke="var(--ac)" stroke-width="2"/><line x1="40" y1="170" x2="340" y2="170" stroke="var(--mu)"/><line x1="40" y1="20" x2="40" y2="170" stroke="var(--mu)"/>
+<text x="190" y="195" text-anchor="middle">log₁₀([Zn²⁺]/[Cu²⁺])</text><text x="6" y="14">E (V)</text><text x="40" y="184" text-anchor="middle">−3</text><text x="190" y="184" text-anchor="middle">0</text><text x="340" y="184" text-anchor="middle">3</text><text x="30" y="25" text-anchor="end">1.25</text><text x="30" y="173" text-anchor="end">0.95</text>`;
+reads.forEach(r=>{const l=Math.log10(r.z/r.c);d+=`<circle cx="${X(Math.max(-3,Math.min(3,l)))}" cy="${Math.max(10,Math.min(170,Y(r.e)))}" r="4" fill="var(--cu)"/>`});
+d+=`<circle cx="${X(Math.log10(st.z/st.c))}" cy="${Y(e)}" r="5" fill="none" stroke="var(--bad)" stroke-width="2"/>`;$('pl').innerHTML=d}
+const Q=[['Which electrode is the anode in a Daniell cell?',['Copper','Zinc','Salt bridge','Voltmeter'],1],
+['What is the standard EMF of the Daniell cell?',['0.42 V','0.76 V','1.10 V','1.56 V'],2],
+['What is the role of the salt bridge?',['Supplies electrons','Maintains charge neutrality','Increases EMF','Dissolves Zn'],1],
+['If [Cu²⁺] is decreased with [Zn²⁺] fixed, the EMF…',['Increases','Decreases','Stays same','Becomes zero instantly'],1],
+['Electrons in the external wire flow from…',['Cu to Zn','Zn to Cu','Salt bridge to Zn','Cu to salt bridge'],1]];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="q"><p>${i+1}. ${q[0]}</p>${q[1].map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${o}</label>`).join('')}<div id="x${i}"></div></div>`).join('');
+$('qs').onclick=()=>{let s=0;Q.forEach((q,i)=>{const c=document.querySelector(`input[name=q${i}]:checked`),ok=c&&+c.value==q[2];if(ok)s+=2;$('x'+i).innerHTML=ok?'<span class="good">Correct</span>':`<span class="bad">Answer: ${q[1][q[2]]}</span>`});score=s;$('qr').textContent=`Score: ${s} / 10`};
+function sv(){$('hN').textContent=det.n||'Not entered';$('hR').textContent=det.r||'Not entered';$('hD').textContent=det.d||'Not entered'}
+try{const s=JSON.parse(localStorage.getItem('dcl')||'null');if(s){det=s;$('fN').value=s.n;$('fR').value=s.r;$('fD').value=s.d;sv()}}catch(e){}
+$('sv').onclick=()=>{det={n:$('fN').value.trim(),r:$('fR').value.trim(),d:$('fD').value.trim()};sv();try{localStorage.setItem('dcl',JSON.stringify(det))}catch(e){}};
+$('cl').onclick=()=>{det={n:'',r:'',d:''};['fN','fR','fD'].forEach(i=>$(i).value='');sv();try{localStorage.removeItem('dcl')}catch(e){}};
+$('pp').onclick=()=>{$('rep').innerHTML=`<div style="padding:24px;font-family:Georgia,serif"><h1>Daniell Cell Virtual Lab Report</h1>
+<p><b>Name:</b> ${det.n||'-'}<br><b>Register No:</b> ${det.r||'-'}<br><b>Department:</b> ${det.d||'-'}</p>
+<h3>Aim</h3><p>To study the Daniell cell and the effect of concentration and temperature on its EMF.</p>
+<h3>Reaction</h3><p>Zn + Cu²⁺ → Zn²⁺ + Cu, E° = 1.10 V, E = E° − (RT/2F) ln([Zn²⁺]/[Cu²⁺])</p>
+<h3>Readings</h3><table border="1" cellpadding="5" style="border-collapse:collapse"><tr><th>#</th><th>[Zn²⁺] M</th><th>[Cu²⁺] M</th><th>T (K)</th><th>E (V)</th></tr>
+${reads.map((r,i)=>`<tr><td>${i+1}</td><td>${f(r.z)}</td><td>${f(r.c)}</td><td>${r.T}</td><td>${r.e.toFixed(3)}</td></tr>`).join('')||'<tr><td colspan="5">No readings recorded</td></tr>'}</table>
+<h3>Quiz score</h3><p>${score===null?'Not attempted':score+' / 10'}</p></div>`;window.print()};
+sw();ui();
+</script></body></html>
